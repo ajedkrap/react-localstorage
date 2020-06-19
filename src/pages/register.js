@@ -25,21 +25,30 @@ class Register extends Component {
     e.preventDefault()
     const getUser = localStorage.getItem('token') ? JSON.parse(localStorage.getItem('token')).username : null
     const { username, password } = this.state
-    if (!(getUser === username)) {
-      const passNumber = password.match(/[0-9]/g)
-      const passSymbol = password.match(/[-!$%@^&*()_+|~=`{}[\]:";'<>?,./]/g)
-      if (password && passNumber && passSymbol) {
-        const data = {
-          username,
-          password
+    const message = document.getElementById("message")
+    if (username !== '' && password !== '') {
+      if (!(getUser === username)) {
+        const passNumber = password.match(/[0-9]/g)
+        const passSymbol = password.match(/[-!$%@^&*()_+|~=`{}[\]:";'<>?,./]/g)
+        if (password && passNumber && passSymbol) {
+          const data = {
+            username,
+            password
+          }
+          localStorage.setItem('token', JSON.stringify(data))
+          message.className = 'text-success'
+          this.setState({ message: 'You are registered' })
+        } else {
+          message.className = 'text-danger'
+          this.setState({ message: 'password require number and symbol' })
         }
-        localStorage.setItem('token', JSON.stringify(data))
-        this.setState({ message: 'You are registered' })
       } else {
-        this.setState({ message: 'password require number and symbol' })
+        message.className = 'text-danger'
+        this.setState({ message: 'username is used' })
       }
     } else {
-      this.setState({ message: 'username is used' })
+      message.className = 'text-danger'
+      this.setState({ message: 'form should not be empty' })
     }
   }
 
@@ -49,7 +58,7 @@ class Register extends Component {
         <Col md={6} className='d-flex justify-content-center align-items-center mr-5'>
           <Form onSubmit={(e) => this.register(e)} name='register' className='bg-light mx-5 p-3 px-5 w-100 rounded shadow-lg'>
             <p className='display-4 text-center'>Register</p>
-            {this.state.message !== '' && <div className='text-danger text-center'>{this.state.message}</div>}
+            <div id='message'>{this.state.message !== '' && <div className='text-center'>{this.state.message}</div>}</div>
             <FormGroup row>
               <Label className='col-sm-4'>Username</Label>
               <Input className='col-sm-8' type="text" placeholder="username" onChange={(e) => this.handlerChange(e, 'username')} />
