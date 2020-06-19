@@ -17,7 +17,7 @@ export default class App extends Component {
         <Switch>
           <Container className='h-100 p-0' style={{ backgroundImage: `url(${background})`, backgroundSize: 'cover' }} fluid>
             <Route exact path='/' component={Register} />
-            <Route exact path='/login' component={Login} />
+            <Route path='/login' component={Login} />
           </Container>
         </Switch>
       </Router >

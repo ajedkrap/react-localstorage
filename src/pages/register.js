@@ -12,35 +12,32 @@ class Register extends Component {
       password: '',
       message: ''
     }
-    this.checkPassword = this.checkPassword.bind(this)
+    this.handlerChange = this.handlerChange.bind(this)
+    this.register = this.register.bind(this)
   }
 
-  checkPassword(e) {
+  handlerChange(e, form) {
     e.preventDefault()
-    const pass = e.target.value
-    const passNumber = pass.match(/[0-9]/g)
-    const passSymbol = pass.match(/[-!$%@^&*()_+|~=`{}[\]:";'<>?,./]/g)
-    if (pass && passNumber && passSymbol) {
-      this.setState({ password: e.target.value })
-      this.setState({ message: '' })
-    } else {
-      this.setState({ message: 'password require number and symbol' })
-    }
-
+    this.setState({ [form]: e.target.value })
   }
-
 
   register(e) {
     e.preventDefault()
-    const getData = JSON.parse(localStorage.getItem('token'))
+    const getUser = localStorage.getItem('token') ? JSON.parse(localStorage.getItem('token')).username : null
     const { username, password } = this.state
-    if (!(getData.username === username)) {
-      const data = {
-        username,
-        password
+    if (!(getUser === username)) {
+      const passNumber = password.match(/[0-9]/g)
+      const passSymbol = password.match(/[-!$%@^&*()_+|~=`{}[\]:";'<>?,./]/g)
+      if (password && passNumber && passSymbol) {
+        const data = {
+          username,
+          password
+        }
+        localStorage.setItem('token', JSON.stringify(data))
+        this.setState({ message: 'You are registered' })
+      } else {
+        this.setState({ message: 'password require number and symbol' })
       }
-      localStorage.setItem('token', data)
-      this.setState({ message: 'You are registered' })
     } else {
       this.setState({ message: 'username is used' })
     }
@@ -50,16 +47,16 @@ class Register extends Component {
     return (
       <Row className='d-flex justify-content-end h-100 p-0'>
         <Col md={6} className='d-flex justify-content-center align-items-center mr-5'>
-          <Form onSubmit={this.register} name='register' className='bg-light mx-5 p-3 px-5 w-100 rounded shadow-lg'>
+          <Form onSubmit={(e) => this.register(e)} name='register' className='bg-light mx-5 p-3 px-5 w-100 rounded shadow-lg'>
             <p className='display-4 text-center'>Register</p>
             {this.state.message !== '' && <div className='text-danger text-center'>{this.state.message}</div>}
             <FormGroup row>
               <Label className='col-sm-4'>Username</Label>
-              <Input className='col-sm-8' type="text" placeholder="username" onChange={(e) => { this.setState({ username: e.target.value }) }} />
+              <Input className='col-sm-8' type="text" placeholder="username" onChange={(e) => this.handlerChange(e, 'username')} />
             </FormGroup>
             <FormGroup row>
               <Label className='col-sm-4'>Password</Label>
-              <Input className='col-sm-8' type="text" placeholder="password" onChange={this.checkPassword} />
+              <Input className='col-sm-8' type="text" placeholder="password" onChange={(e) => this.handlerChange(e, 'password')} />
             </FormGroup>
             <Container className='d-flex justify-content-end' fluid>
               <Button type='submit'>Register</Button>
