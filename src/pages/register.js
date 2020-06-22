@@ -33,19 +33,24 @@ class Register extends Component {
       if (!(getUser === username)) {
         const whitespace = username.match(/^\S*$/)
         if (whitespace) {
-          const passNumber = password.match(/[0-9]/g)
-          const passSymbol = password.match(/[-!$%@^&*()_+|~=`{}[\]:";'<>?,./]/g)
-          if (password && passNumber && passSymbol) {
-            const data = {
-              username,
-              password
+          if (password.length > 7) {
+            const passNumber = password.match(/[0-9]/g)
+            const passSymbol = password.match(/[-!$%@^&*()_+|~=`{}[\]:";'<>?,./]/g)
+            if (password && passNumber && passSymbol) {
+              const data = {
+                username,
+                password
+              }
+              localStorage.setItem('token', JSON.stringify(data))
+              message.className = 'text-success w-100'
+              this.setState({ message: 'You are registered', mayLogin: !this.state.login })
+            } else {
+              message.className = 'text-danger w-100'
+              this.setState({ message: 'password require number and symbol' })
             }
-            localStorage.setItem('token', JSON.stringify(data))
-            message.className = 'text-success w-100'
-            this.setState({ message: 'You are registered', mayLogin: !this.state.login })
           } else {
             message.className = 'text-danger w-100'
-            this.setState({ message: 'password require number and symbol' })
+            this.setState({ message: 'password must be over 8 character' })
           }
         } else {
           message.className = 'text-danger w-100'
